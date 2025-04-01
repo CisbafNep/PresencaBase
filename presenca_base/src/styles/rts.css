@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: block;
+    font-family: Arial, sans-serif;
+    background: var(--color);
+    color: var(--ltr);
+    width: 100% !important;
+    height: 100% !important;
+}
+
+:root {
+    --color: #fff;
+    --ltr: #333;
+    --head: #333;
+    --shd: #000;
+}
+
+.lightu {
+
+    --color: #333;
+    --ltr: #fff;
+    --head: #fff;
+    --shd: #cfcdcd9f;
+}
+
+.headerRTS {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 120px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    background-color: var(--head);
+    box-shadow: 0 5px 9px var(--shd);
+}
+
+.headerRTS a {
+    text-decoration: none;
+    color: var(--color);
+    font-size: 40px;
+}
+
+.headerRTS a:hover {
+    background: var(--color);
+    color: var(--ltr);
+    width: auto;
+}
+
+.btnzin {
+    border-radius: 10%;
+    background: yellow;
+    color: blue;
+}
+
+.btnzin:hover {
+    background: red;
+    color: yellow;
+}
+
+.content {
+    display: none;
+    margin: 95px;
+}
+
+.content.active {
+    display: block;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+img {
+    flex-wrap: wrap;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls input {
+    margin-right: 10px;
+}
+
+.controls button {
+    margin-right: 10px;
+}
+
+#chat-container-nilopolis {
+    width: 80%;
+    margin-top: 40px;
+}
+
+/* Responsividade para tablets e celulares */
+@media (max-width: 768px) {
+    .headerRTS {
+        flex-direction: row;
+        padding: 8px 20px;
+    }
+
+    .headerRTS a {
+        font-size: 20px;
+    }
+
+    .headerRTS img {
+        width: 80px;
+    }
+
+    .content {
+        margin: 80px 5px;
+    }
+
+    table th, table td {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    #chart-container-nilopolis {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerRTS a {
+        font-size: 16px;
+    }
+
+    .headerRTS img {
+        width: 60px;
+    }
+
+    table th, table td {
+        font-size: 10px;
+        padding: 4px;
+    }
+
+    .content {
+        margin: 80px 2px;
+    }
+
+    #chart-container-nilopolis {
+        width: 100%;
+        height: auto;
+    }
+}

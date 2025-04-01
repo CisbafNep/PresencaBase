@@ -1,0 +1,13 @@
+:root {
+  --color: #fff;
+  --ltr: #333;
+  --head: #333;
+  --shd: #000;
+}
+
+.light {
+  --color: #333;
+  --ltr: #fff;
+  --head: #fff;
+  --shd: #cfcdcd9f;
+}
