@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Participant } from "../types";
 import { useGetUser } from "../hooks/getUsers";
 import { usePutUser } from "../hooks/putUsers";
@@ -18,116 +18,74 @@ export function Service({ idBase, rts }: ServiceProps) {
   const [searchName, setSearchName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [showChart, setShowChart] = useState(false);
-  const [participantes, setParticipantes] = useState<Participant[]>(() => {
-    try {
-      const saved = localStorage.getItem(`participantes_${idBase}`);
-      return saved ? JSON.parse(saved) : [];
-    } catch (error) {
-      console.error("Erro ao carregar participantes:", error);
-      return []; // Fallback garantido
-    }
-  });
+  const [participantes, setParticipantes] = useState<Participant[]>([]);
 
   const { data: userData, error, isLoading } = useGetUser(searchName);
   const { mutateAsync: put } = usePutUser("");
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
   const participantsQueries = useGetUserLive(
-    Array.isArray(participantes) ? participantes : []
+    Array.isArray(participantes) ? participantes.filter((p) => p) : []
   );
   const previousData = useRef<Participant[]>([]);
 
+  // Hook para buscar todos os participantes do banco com o baseName atual
   const {
-    data: fetchedParticipants,
+    data: fetchedParticipants = [],
     isLoading: isLoadingParticipants,
     isError: isErrorParticipants,
-  } = useGetAllUsers({ baseName: idBase, nome: searchName });
+  } = useGetAllUsers({ baseName: idBase || "", nome: searchName || "" });
 
+  // Atualiza os participantes com os dados da API
   useEffect(() => {
-    if (fetchedParticipants) {
+    if (Array.isArray(fetchedParticipants)) {
+      setParticipantes(fetchedParticipants);
+    } else if (fetchedParticipants && "data" in fetchedParticipants) {
       setParticipantes(
         Array.isArray(fetchedParticipants.data)
           ? fetchedParticipants.data
           : [fetchedParticipants.data]
       );
-      localStorage.setItem(
-        `participantes_${idBase}`,
-        JSON.stringify(fetchedParticipants)
-      );
     }
-  }, [fetchedParticipants, idBase]);
-
-  // Efeito para carregar do localStorage enquanto os dados não chegam
-  useEffect(() => {
-    const saved = localStorage.getItem(`participantes_${idBase}`);
-    if (saved && !fetchedParticipants) {
-      setParticipantes(JSON.parse(saved));
-    }
-  }, [idBase, fetchedParticipants]);
-
-  const exportToXLS = () => {
-    const data = participantes.map((p) => ({
-      Nome: p.name,
-      Cargo: p.role,
-      Presença: p.presences,
-      Faltas: p.faults,
-    }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Participantes");
-    XLSX.writeFile(
-      wb,
-      `Participantes_${idBase.replace("Content", "")}_${
-        new Date().toISOString().split("T")[0]
-      }.xls`
-    );
-  };
-  // Salva os participantes no localStorage
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      localStorage.setItem(
-        `participantes_${idBase}`,
-        JSON.stringify(participantes)
-      );
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [participantes, idBase]);
-
-  // Carrega os participantes do localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(`participantes_${idBase}`);
-    if (saved) {
-      setParticipantes(JSON.parse(saved));
-    }
-  }, [idBase]);
+  }, [fetchedParticipants]);
 
   // Adiciona usuário quando os dados da API chegam
   useEffect(() => {
-    if (isAdding && userData?.data) {
-      const userFromApi = userData.data;
-      console.log("Dados recebidos da API:", userFromApi);
+    const adicionarNovoParticipante = async () => {
+      if (isAdding && userData?.data) {
+        const userFromApi = userData.data;
 
-      const userExists = participantes.some((p) => p.id === userFromApi.id);
-      if (!userExists) {
-        const novoParticipante: Participant = {
-          id: userFromApi.id,
-          name: userFromApi.name,
-          role: userFromApi.role,
-          presences: userFromApi.presences,
-          faults: userFromApi.faults,
-          baseName: userFromApi.baseName,
-        };
-        console.log(novoParticipante);
-        setParticipantes((prev) => [...prev, novoParticipante]);
-        setNome("");
-      } else {
-        alert("Usuário já está na lista!");
+        // Verifica se já existe com o baseName atualizado
+        const userExists = participantes.some(
+          (p) => p.id === userFromApi.id && p.baseName === idBase
+        );
+
+        if (!userExists) {
+          const novoParticipante = {
+            ...userFromApi,
+            baseName: idBase,
+          };
+
+          // Atualiza primeiro no backend
+          await put(novoParticipante);
+
+          // Depois atualiza o estado local
+          setParticipantes((prev) => [...prev, novoParticipante]);
+          setNome("");
+        } else {
+          alert("Usuário já está na lista!");
+        }
+
+        setIsAdding(false);
+        setSearchName("");
       }
-      setIsAdding(false);
-      setSearchName("");
-    }
-  }, [userData, isAdding, participantes]);
+    };
+
+    adicionarNovoParticipante();
+  }, [userData, isAdding, idBase]);
+  const ordenarParticipantes = (lista: Participant[]) => {
+    return [...lista].sort((a, b) => a.name.localeCompare(b.name));
+  };
 
   // Trata erros na busca
   useEffect(() => {
@@ -146,37 +104,47 @@ export function Service({ idBase, rts }: ServiceProps) {
       .map((q) => q.data!)
       .filter(Boolean);
 
-    // Verificação adicional de tipo
     if (
       Array.isArray(newData) &&
       JSON.stringify(newData) !== JSON.stringify(previousData.current)
     ) {
-      setParticipantes((prev) => {
-        // Garante que prev é array antes do map
-        if (!Array.isArray(prev)) return prev;
-
-        return prev.map((p) => newData.find((nd) => nd.id === p.id) || p);
-      });
+      setParticipantes((prev) =>
+        Array.isArray(prev)
+          ? prev.map((p) => newData.find((nd) => nd.id === p.id) || p)
+          : prev
+      );
 
       previousData.current = newData;
     }
   }, [participantsQueries]);
   // Atualiza presença ou falta e realiza o PUT no backend
-  const atualizarPresenca = (id: number, tipo: "presenca" | "falta") => {
-    setParticipantes(
-      participantes.map((p) => {
+  // Função para atualizar presenças
+  const atualizarPresenca = async (id: number, tipo: "presenca" | "falta") => {
+    try {
+      const updated = participantes.map((p) => {
         if (p.id === id) {
-          const updated = {
-            ...p,
-            presences: tipo === "presenca" ? p.presences + 1 : p.presences,
-            faults: tipo === "falta" ? p.faults + 1 : p.faults,
-          };
-          put(updated);
-          return updated;
+          const newPresences =
+            tipo === "presenca" ? p.presences + 1 : p.presences;
+          const newFaults = tipo === "falta" ? p.faults + 1 : p.faults;
+          return { ...p, presences: newPresences, faults: newFaults };
         }
         return p;
-      })
-    );
+      });
+
+      // Atualiza no backend e espera a resposta antes de atualizar o estado
+      const participantToUpdate = updated.find((p) => p.id === id);
+      if (participantToUpdate) {
+        await put(participantToUpdate);
+      } else {
+        console.error(`Participant with id ${id} not found.`);
+      }
+
+      // Atualiza o estado local
+      setParticipantes(updated);
+    } catch (error) {
+      console.error("Erro ao atualizar presença:", error);
+      alert("Erro na atualização! Verifique o console.");
+    }
   };
 
   const limpar = (id: number) => {
@@ -207,41 +175,57 @@ export function Service({ idBase, rts }: ServiceProps) {
   const finalizarPresencas = () => {
     setParticipantes((prev) => {
       const updated = prev.map((p) => {
-        const newP = { ...p, presences: 0, faults: 0 };
+        const newP = { ...p, presences: 0, faults: 0, baseName: "Espera" };
         put(newP);
         return newP;
       });
       return updated.filter(() => false); // Remove todos os participantes
     });
   };
-
+  const exportToXLS = () => {
+    const data = participantes.map((p) => ({
+      Nome: p.name,
+      Cargo: p.role,
+      Presença: p.presences,
+      Faltas: p.faults,
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Participantes");
+    XLSX.writeFile(
+      wb,
+      `Participantes_${idBase.replace("Content", "")}_${
+        new Date().toISOString().split("T")[0]
+      }.xls`
+    );
+  };
   const getUsers = async () => {
     if (nome.trim()) {
       try {
         setIsAdding(true);
         setSearchName(nome);
 
-        // Atualiza baseName apenas para novos participantes
-        const updatedParticipants = participantes.map((p) => ({
-          ...p,
-          baseName: idBase,
-        }));
-        setParticipantes(updatedParticipants);
-        await Promise.all(
-          updatedParticipants.map(async (p) => {
-            await put(p); // Usar mutateAsync se for react-query
-          })
-        );
+        // Atualiza o baseName dos participantes existentes
+        await atualizarBaseNameExistente();
+
+        // A busca do novo usuário acontecerá automaticamente pelo useEffect
+        // quando searchName for atualizado
       } catch (error) {
         console.error("Erro ao atualizar base:", error);
-
-        // Reverte estado em caso de erro
-        setParticipantes(participantes);
         alert("Erro na atualização da base!");
-      } finally {
-        setIsAdding(false);
       }
     }
+  };
+
+  const atualizarBaseNameExistente = async () => {
+    const updatedParticipants = participantes.map((p) => ({
+      ...p,
+      baseName: idBase,
+    }));
+
+    setParticipantes(ordenarParticipantes(updatedParticipants));
+
+    await Promise.all(updatedParticipants.map((p) => put(p)));
   };
 
   const gerarGrafico = () => {
@@ -309,12 +293,6 @@ export function Service({ idBase, rts }: ServiceProps) {
     };
   }, [showChart, participantes]);
 
-  const handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter") {
-      getUsers();
-    }
-  };
-
   return (
     <div>
       <div id="controls" className="controls" style={{ marginBottom: "10px" }}>
@@ -324,7 +302,11 @@ export function Service({ idBase, rts }: ServiceProps) {
           placeholder="Nome do colaborador..."
           value={nome}
           onChange={(e) => setNome(e.target.value)}
-          onKeyDown={handleKeyPress}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              getUsers();
+            }
+          }}
           style={{ marginRight: "10px", color: "gray" }}
         />
         <Button
@@ -351,8 +333,9 @@ export function Service({ idBase, rts }: ServiceProps) {
         </thead>
         <tbody>
           {Array.isArray(participantes) && participantes.length > 0 ? (
-            participantes.map((p) => (
-              <tr key={p.id}>
+            participantes.map((p, index) => (
+              <tr key={p.id ?? `temp-key-${index}`}>
+                {/* Usa um fallback caso id seja null/undefined */}
                 <td>{p.name}</td>
                 <td>{p.role}</td>
                 <td>{p.presences}</td>

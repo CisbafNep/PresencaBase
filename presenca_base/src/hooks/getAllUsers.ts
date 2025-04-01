@@ -11,13 +11,12 @@ const fetchUser = async (baseName: string): AxiosPromise<Participant> => {
 
 export function useGetAllUsers({
   baseName,
-  nome,
 }: {
   baseName: string;
   nome: string;
 }) {
   return useQuery({
-    queryKey: ["user", nome],
+    queryKey: ["allUsers"],
     queryFn: () => fetchUser(baseName),
     retry: 2,
     enabled: !!baseName,

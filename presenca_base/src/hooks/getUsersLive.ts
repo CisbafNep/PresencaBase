@@ -33,7 +33,8 @@ export function useGetUserLive(participants: Participant[]) {
         if (error.message.includes("404")) return false;
         return failureCount < 2;
       },
-      enabled: !!p.name.trim(), // Correção aplicada aqui
+
+      enabled: !!p.name?.trim(),
     })
   );
 
