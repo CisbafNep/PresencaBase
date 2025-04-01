@@ -1,47 +1,50 @@
 import { useEffect, useState } from "react";
 import { Participant } from "../types";
-import { atualizarTabela, gerarGrafico } from "./utils";
+import { atualizarTabela, gerarGrafico } from "./RtsService";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
 
 const RTsQueimados = () => {
-  const idTabela = "tabela-presenca-queimadosrt";
-  const idChart = "presenca-chart-queimadosrt";
+  const idTabela = "tabela-presenca-nilopolisrt";
+  const idChart = "presenca-chart-nilopolisrt";
 
-  const [participants] = useState<Participant[]>(
-    JSON.parse(localStorage.getItem("participantes_queimadosContent") || "[]")
-  );
+  const [searchParams] = useSearchParams();
+  const idBase = searchParams.get("idBase") || ""; // Captura o idBase da URL
+
+  const { data, isLoading, isError } = useGetAllUsers({ baseName: idBase });
 
   useEffect(() => {
-    atualizarTabela(participants, idTabela);
-    gerarGrafico(participants, idChart);
-  }, [participants]);
+    if (idBase && data?.data) {
+      const participantes = Array.isArray(data.data) ? data.data : [data.data];
+      atualizarTabela({ participantes, table: idTabela, idBase }); // Passando idBase
+      gerarGrafico({ participantes, chart: idChart, idBase }); // Passando idBase
+    }
+  }, [data, idBase]); // Adicionando idBase como dependência
+
+  if (!idBase) return <p>Erro: Base não informada na URL.</p>;
+  if (isLoading) return <p>Carregando participantes...</p>;
+  if (isError) return <p>Erro ao carregar os participantes.</p>;
 
   return (
     <>
-      <RtSHeader title={"QUEIMADOS"} url={"/queimados"} />
+      <RtSHeader title={`Base ${idBase}`} url={`/nilopolis?idBase=${idBase}`} />
       <main>
         <div className="content active" id="contentnilopolisrt">
-          <br />
-          <br />
-          <br />
           <p style={{ textAlign: "center" }}>
             <img alt="" src="/Samu-logo.png" style={{ width: "120px" }} />
           </p>
           <h1 style={{ textAlign: "center" }}>
-            Acompanhamento de presenças base SAMU Queimados
+            Acompanhamento de presenças base SAMU {idBase}
           </h1>
           <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
             Controle de presenças
           </h2>
-          <br />
-          <br />
           <p>
             Obs: Para estar apto a receber o certificado de conclusão, o
             colaborador deve obter o mínimo de
-            <b>70%(setenta porcento)</b> da presença nos treinamentos.
+            <b> 70%(setenta porcento) </b> da presença nos treinamentos.
           </p>
-          <table id="tabela-presenca-queimadosrt">
+          <table id="tabela-presenca-nilopolisrt">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -51,15 +54,14 @@ const RTsQueimados = () => {
                 <th>Presença %</th>
               </tr>
             </thead>
-            <tbody>{/* Presentes adicionados aqui */}</tbody>
+            <tbody></tbody>
           </table>
-          <div id="chart-container-queimadosrt">
-            <canvas id="presenca-chart-queimadosrt"></canvas>
+          <div id="chart-container-nilopolirt">
+            <canvas id="presenca-chart-nilopolisrt"></canvas>
           </div>
         </div>
       </main>
     </>
   );
 };
-
 export default RTsQueimados;

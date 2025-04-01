@@ -34,7 +34,7 @@ export function Service({ idBase, rts }: ServiceProps) {
     data: fetchedParticipants = [],
     isLoading: isLoadingParticipants,
     isError: isErrorParticipants,
-  } = useGetAllUsers({ baseName: idBase || "", nome: searchName || "" });
+  } = useGetAllUsers({ baseName: idBase || "" });
 
   // Atualiza os participantes com os dados da API
   useEffect(() => {
@@ -484,7 +484,10 @@ export function Service({ idBase, rts }: ServiceProps) {
             background: "black",
           }}
         >
-          <a href={rts} style={{ textDecoration: "none", color: "#fff" }}>
+          <a
+            href={`${rts}?idBase=${idBase}`}
+            style={{ textDecoration: "none", color: "#fff" }}
+          >
             Checar relatórios RTs
           </a>
         </Button>

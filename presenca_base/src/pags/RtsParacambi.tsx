@@ -1,48 +1,51 @@
-import { useEffect, useState } from "react";
-import { Participant } from "../types";
-import { atualizarTabela, gerarGrafico } from "./utils";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom"; // Hook para pegar os parâmetros da URL
+import { atualizarTabela, gerarGrafico } from "./RtsService";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
+import { useGetAllUsers } from "../hooks/getAllUsers";
 
 const RTsParacambi = () => {
   const idTabela = "tabela-presenca-paracambirt";
   const idChart = "presenca-chart-paracambirt";
 
-  const [participants] = useState<Participant[]>(
-    JSON.parse(localStorage.getItem("participantes_paracambiContent") || "[]")
-  );
+  const [searchParams] = useSearchParams();
+  const idBase = searchParams.get("idBase") || ""; // Captura o idBase da URL
+
+  const { data, isLoading, isError } = useGetAllUsers({ baseName: idBase });
 
   useEffect(() => {
-    atualizarTabela(participants, idTabela);
-    gerarGrafico(participants, idChart);
-  }, [participants]);
+    if (idBase && data?.data) {
+      const participantes = Array.isArray(data.data) ? data.data : [data.data];
+      atualizarTabela({ participantes, table: idTabela, idBase }); // Passando idBase
+      gerarGrafico({ participantes, chart: idChart, idBase }); // Passando idBase
+    }
+  }, [data, idBase]); // Adicionando idBase como dependência
+
+  if (!idBase) return <p>Erro: Base não informada na URL.</p>;
+  if (isLoading) return <p>Carregando participantes...</p>;
+  if (isError) return <p>Erro ao carregar os participantes.</p>;
 
   return (
     <>
-      <RtSHeader title={"PARACAMBI"} url={"/paracambi"} />
-      <aside></aside>
+      <RtSHeader title={`Base ${idBase}`} url={`/paracambi?idBase=${idBase}`} />
       <main>
-        <div className="content active" id="contentparacambirt">
-          <br />
-          <br />
-          <br />
+        <div className="content active" id="contentparcambirt">
           <p style={{ textAlign: "center" }}>
             <img alt="" src="/Samu-logo.png" style={{ width: "120px" }} />
           </p>
           <h1 style={{ textAlign: "center" }}>
-            Acompanhamento de presenças base SAMU Paracambi
+            Acompanhamento de presenças base SAMU {idBase}
           </h1>
           <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
             Controle de presenças
           </h2>
-          <br />
-          <br />
           <p>
             Obs: Para estar apto a receber o certificado de conclusão, o
             colaborador deve obter o mínimo de
-            <b>70%(setenta porcento)</b> da presença nos treinamentos.
+            <b> 70%(setenta porcento) </b> da presença nos treinamentos.
           </p>
-          <table id="tabela-presenca-paracambirt">
+          <table id="tabela-presenca-parcambirt">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -52,10 +55,10 @@ const RTsParacambi = () => {
                 <th>Presença %</th>
               </tr>
             </thead>
-            <tbody>{/* Presentes adicionados aqui */}</tbody>
+            <tbody></tbody>
           </table>
-          <div id="chart-container-paracambi">
-            <canvas id="presenca-chart-paracambirt"></canvas>
+          <div id="chart-container-nilopolirt">
+            <canvas id="presenca-chart-parcambirt"></canvas>
           </div>
         </div>
       </main>

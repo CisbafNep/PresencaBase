@@ -9,12 +9,7 @@ const fetchUser = async (baseName: string): AxiosPromise<Participant> => {
   return axios.get(`${URL_API}` + "/base/" + baseName);
 };
 
-export function useGetAllUsers({
-  baseName,
-}: {
-  baseName: string;
-  nome: string;
-}) {
+export function useGetAllUsers({ baseName }: { baseName: string }) {
   return useQuery({
     queryKey: ["allUsers"],
     queryFn: () => fetchUser(baseName),
