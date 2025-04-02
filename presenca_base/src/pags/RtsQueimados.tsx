@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { Participant } from "../types";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom"; // Hook para pegar os parâmetros da URL
 import { atualizarTabela, gerarGrafico } from "./RtsService";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
+import { useGetAllUsers } from "../hooks/getAllUsers";
 
 const RTsQueimados = () => {
-  const idTabela = "tabela-presenca-nilopolisrt";
-  const idChart = "presenca-chart-nilopolisrt";
+  const idTabela = "tabela-presenca-queimadosrt";
+  const idChart = "presenca-chart-queimadosrt";
 
   const [searchParams] = useSearchParams();
   const idBase = searchParams.get("idBase") || ""; // Captura o idBase da URL
@@ -27,9 +28,9 @@ const RTsQueimados = () => {
 
   return (
     <>
-      <RtSHeader title={`Base ${idBase}`} url={`/nilopolis?idBase=${idBase}`} />
+      <RtSHeader title={`${idBase}`} url={`/queimados`} />
       <main>
-        <div className="content active" id="contentnilopolisrt">
+        <div className="content active" id="contentQueimadosrt">
           <p style={{ textAlign: "center" }}>
             <img alt="" src="/Samu-logo.png" style={{ width: "120px" }} />
           </p>
@@ -44,7 +45,7 @@ const RTsQueimados = () => {
             colaborador deve obter o mínimo de
             <b> 70%(setenta porcento) </b> da presença nos treinamentos.
           </p>
-          <table id="tabela-presenca-nilopolisrt">
+          <table id={idTabela}>
             <thead>
               <tr>
                 <th>Nome</th>
@@ -56,12 +57,13 @@ const RTsQueimados = () => {
             </thead>
             <tbody></tbody>
           </table>
-          <div id="chart-container-nilopolirt">
-            <canvas id="presenca-chart-nilopolisrt"></canvas>
+          <div id="chart-container-queimadosrt">
+            <canvas id={idChart}></canvas>
           </div>
         </div>
       </main>
     </>
   );
 };
+
 export default RTsQueimados;

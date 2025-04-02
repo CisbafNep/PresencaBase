@@ -1,4 +1,7 @@
 import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
+Chart.register(ChartDataLabels);
 
 interface TableParticipant {
   name: string;
@@ -46,10 +49,6 @@ interface Participant {
   faults: number;
 }
 
-interface ChartInstance {
-  destroy: () => void;
-}
-
 let chartInstance: Chart | null = null; // Declara a variável chartInstance
 
 interface GerarGraficoParams {
@@ -64,11 +63,7 @@ interface GerarGraficoParams {
   idBase: string;
 }
 
-export function gerarGrafico({
-  participantes,
-  chart,
-  idBase,
-}: GerarGraficoParams) {
+export function gerarGrafico({ participantes, chart }: GerarGraficoParams) {
   const ctx = document.getElementById(chart) as HTMLCanvasElement | null;
   if (!ctx) return;
 
@@ -89,20 +84,43 @@ export function gerarGrafico({
         {
           label: "Presenças",
           data: presencas,
-          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          backgroundColor: "rgba(75, 168, 32, 0.8)",
         },
         {
           label: "Faltas",
           data: faltas,
-          backgroundColor: "rgba(255, 99, 132, 0.6)",
+          backgroundColor: "rgba(250, 21, 21, 0.8)",
         },
       ],
     },
     options: {
       responsive: true,
+      plugins: {
+        tooltip: {
+          enabled: true,
+        },
+        legend: {
+          display: true,
+        },
+        datalabels: {
+          color: "white",
+          anchor: "center",
+          align: "center",
+          formatter: (value) => {
+            return value > 0 ? value : "";
+          },
+        },
+      },
       scales: {
+        x: {
+          stacked: true,
+        },
         y: {
           beginAtZero: true,
+          stacked: true,
+          ticks: {
+            precision: 0,
+          },
         },
       },
     },

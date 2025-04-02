@@ -28,9 +28,9 @@ const RTsParacambi = () => {
 
   return (
     <>
-      <RtSHeader title={`Base ${idBase}`} url={`/paracambi?idBase=${idBase}`} />
+      <RtSHeader title={`${idBase}`} url={`/paracambi`} />
       <main>
-        <div className="content active" id="contentparcambirt">
+        <div className="content active" id="contentParacambirt">
           <p style={{ textAlign: "center" }}>
             <img alt="" src="/Samu-logo.png" style={{ width: "120px" }} />
           </p>
@@ -45,7 +45,7 @@ const RTsParacambi = () => {
             colaborador deve obter o mínimo de
             <b> 70%(setenta porcento) </b> da presença nos treinamentos.
           </p>
-          <table id="tabela-presenca-parcambirt">
+          <table id={idTabela}>
             <thead>
               <tr>
                 <th>Nome</th>
@@ -57,8 +57,8 @@ const RTsParacambi = () => {
             </thead>
             <tbody></tbody>
           </table>
-          <div id="chart-container-nilopolirt">
-            <canvas id="presenca-chart-parcambirt"></canvas>
+          <div id="chart-container-paracambirt">
+            <canvas id={idChart}></canvas>
           </div>
         </div>
       </main>

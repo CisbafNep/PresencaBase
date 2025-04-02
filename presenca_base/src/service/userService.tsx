@@ -250,29 +250,42 @@ export function Service({ idBase, rts }: ServiceProps) {
           {
             label: "Presenças",
             data: presencaData,
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            backgroundColor: "rgba(75, 168, 32, 0.8)",
           },
           {
             label: "Faltas",
             data: faltaData,
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
+            backgroundColor: "rgba(250, 21, 21, 0.8)",
           },
         ],
       },
       options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            enabled: true,
+          },
+          legend: {
+            display: true,
+          },
+          datalabels: {
+            color: "white",
+            anchor: "center",
+            align: "center",
+            formatter: (value) => {
+              return value > 0 ? value : "";
+            },
+          },
+        },
         scales: {
           x: {
             stacked: true,
           },
           y: {
             beginAtZero: true,
-            max: 9,
             stacked: true,
             ticks: {
               precision: 0,
-              callback: function (value) {
-                return value; // + '%';
-              },
             },
           },
         },

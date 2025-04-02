@@ -28,7 +28,7 @@ const RTsNilopolis = () => {
 
   return (
     <>
-      <RtSHeader title={`Base ${idBase}`} url={`/nilopolis?idBase=${idBase}`} />
+      <RtSHeader title={`${idBase}`} url={`/nilopolis?idBase=${idBase}`} />
       <main>
         <div className="content active" id="contentnilopolisrt">
           <p style={{ textAlign: "center" }}>

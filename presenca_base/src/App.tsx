@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { NilopolisContent } from "./components/NilopolisContent";
 import "./styles/variables.css";
 import "./styles/main.css";
@@ -9,7 +9,7 @@ import RTsParacambi from "./pags/RtsParacambi.tsx";
 import RtsQueimados from "./pags/RtsQueimados.tsx";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { Menu } from "./components/Menu.tsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Layout } from "./components/Layout.tsx";
 
 function App() {
@@ -31,6 +31,17 @@ function App() {
     },
   });
   const showSidebarToggle = windowWidth < 768;
+
+  const location = useLocation();
+  const previousPath = useRef(location.pathname);
+
+  useEffect(() => {
+    if (previousPath.current !== location.pathname) {
+      previousPath.current = location.pathname;
+      window.location.reload();
+    }
+  }, [location.pathname]);
+
   return (
     <ThemeProvider theme={theme}>
       <Routes>
