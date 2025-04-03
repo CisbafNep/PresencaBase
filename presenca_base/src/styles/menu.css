@@ -1,4 +1,4 @@
-.bodyMenu {
+.body_menu {
   font-family: Arial, sans-serif;
   align-items: center;
   position: absolute;
@@ -6,25 +6,79 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
 .title {
-  font-size: 45px;
+  font-size: 2.5rem; /* 45px -> 2.5rem */
+  margin-bottom: 30px;
+  line-height: 1.2;
 }
+.responsive-image {
+  max-width: 500px;
+  min-width: 50px;
+  width: 100%;
+  height: auto;
+}
+
 .btz {
-  width: 200px;
-  height: 90px;
-  flex-wrap: wrap;
-  margin: 5px;
-  font-size: 30px;
-  display: inline;
+  display: table-row;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 80px;
+  margin: 10px 0;
+  font-size: 1.3rem; /* 30px -> 1.3rem */
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 5px 5px 5px rgb(95, 92, 92);
+  box-shadow: 3px 3px 5px rgba(95, 92, 92, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 15px;
+  background: white;
+  border: 2px solid #ddd;
 }
+
 a {
   text-decoration: none;
   color: #333;
+  width: 100%;
 }
-.btz:hover {
-  transform: scale(1.2, 1.2);
+
+/* Media Queries para Celulares */
+@media (max-width: 768px) {
+  .body_menu {
+    padding: 15px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
+
+  .title {
+    font-size: 2rem; /* Reduz tamanho do título */
+    margin-bottom: 20px;
+  }
+
+  .btz {
+    max-width: 100%;
+    min-height: 70px;
+    font-size: 1.1rem;
+    margin: 8px 0;
+    box-shadow: 2px 2px 4px rgba(95, 92, 92, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .btz {
+    font-size: 1rem;
+    min-height: 60px;
+    padding: 10px;
+  }
+}
+
+/* Melhoria para hover em dispositivos touch */
+@media (hover: hover) and (pointer: fine) {
+  .btz:hover {
+    transform: scale(1.05);
+    box-shadow: 4px 4px 6px rgba(95, 92, 92, 0.4);
+  }
 }

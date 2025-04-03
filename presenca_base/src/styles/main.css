@@ -23,29 +23,26 @@ body {
   height: 100% !important;
 }
 
-header {
+.main-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  padding: 8px 70px;
+  padding: 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   z-index: 1;
   background-color: var(--head);
   box-shadow: 0 5px 9px var(--shd);
 }
 
-header a {
-  text-decoration: none;
+.main-header a {
   color: var(--color);
 }
 
 header a:hover {
-  background: var(--color);
-  color: var(--ltr);
-  width: auto;
+  color: darkgrey;
 }
 
 .btnzin {
@@ -234,6 +231,9 @@ img {
 
   header img {
     width: 80px;
+  }
+  .logo-btn {
+    display: inline-block !important; /* Garante que a logo continue visível */
   }
 
   table th,

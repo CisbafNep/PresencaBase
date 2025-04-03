@@ -1,5 +1,6 @@
 import { Button, CircularProgress, Alert } from "@mui/material";
 import { Participant } from "../types";
+import "./service_styles/ParticipantsTable.css";
 
 interface ParticipantsTableProps {
   participantes: Participant[];
@@ -36,32 +37,33 @@ export function ParticipantsTable({
   return (
     <table
       id="participants-table"
-      style={{ width: "100%", borderCollapse: "collapse" }}
+      style={{ width: "100%" }}
+      className="table_wrapper"
     >
       <thead>
         <tr>
-          <th style={tableHeaderStyle}>Nome</th>
-          <th style={tableHeaderStyle}>Cargo</th>
-          <th style={tableHeaderStyle}>Presença</th>
-          <th style={tableHeaderStyle}>Faltas</th>
-          <th style={tableHeaderStyle}>Presença %</th>
-          <th style={tableHeaderStyle}>Ações</th>
+          <th className={"table_header"}>Nome</th>
+          <th className={"table_header"}>Cargo</th>
+          <th className={"table_header"}>Presença</th>
+          <th className={"table_header"}>Faltas</th>
+          <th className={"table_header"}>Presença %</th>
+          <th className={"table_header"}>Ações</th>
         </tr>
       </thead>
       <tbody>
         {participantes.map((p, index) => (
-          <tr key={p.id ?? `temp-key-${index}`} style={tableRowStyle}>
-            <td style={tableCellStyle}>{p.name}</td>
-            <td style={tableCellStyle}>{p.role}</td>
-            <td style={tableCellStyle}>{p.presences}</td>
-            <td style={tableCellStyle}>{p.faults}</td>
-            <td style={tableCellStyle}>
+          <tr key={p.id ?? `temp-key-${index}`} className={"table_row"}>
+            <td className={"table_cell"}>{p.name}</td>
+            <td className={"table_cell"}>{p.role}</td>
+            <td className={"table_cell"}>{p.presences}</td>
+            <td className={"table_cell"}>{p.faults}</td>
+            <td className={"table_cell"}>
               {p.presences + p.faults > 0
                 ? Math.round((p.presences / (p.presences + p.faults)) * 100)
                 : 0}
               %
             </td>
-            <td style={tableCellStyle}>
+            <td className={"table_cell"}>
               <Button
                 style={{
                   padding: "3px",
@@ -131,23 +133,3 @@ export function ParticipantsTable({
     </table>
   );
 }
-
-// Estilos originais
-const tableHeaderStyle = {
-  backgroundColor: "#f5f5f5",
-  padding: "12px",
-  borderBottom: "1px solid #ddd",
-  textAlign: "left" as const,
-};
-
-const tableRowStyle = {
-  borderBottom: "1px solid #ddd",
-  "&:hover": {
-    backgroundColor: "#f9f9f9",
-  },
-};
-
-const tableCellStyle = {
-  padding: "12px",
-  textAlign: "left" as const,
-};

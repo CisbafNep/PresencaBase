@@ -35,19 +35,23 @@ export function Service({ idBase, rts }: ServiceProps) {
 
   // Efeito para carregar participantes iniciais
   useEffect(() => {
-    const loadParticipants = () => {
-      if (Array.isArray(fetchedParticipants)) {
-        setParticipantes(fetchedParticipants);
-      } else if (fetchedParticipants?.data) {
-        setParticipantes(
-          Array.isArray(fetchedParticipants.data)
-            ? fetchedParticipants.data
-            : [fetchedParticipants.data]
-        );
-      }
-    };
+    if (!fetchedParticipants) return;
 
-    loadParticipants();
+    // Transformar os participantes em um array, caso não seja já
+    const participantesArray = Array.isArray(fetchedParticipants)
+      ? fetchedParticipants
+      : fetchedParticipants?.data
+      ? Array.isArray(fetchedParticipants.data)
+        ? fetchedParticipants.data
+        : [fetchedParticipants.data]
+      : [];
+
+    // Criar um Map para garantir IDs únicos
+    const uniqueParticipants = [
+      ...new Map(participantesArray.map((p) => [p.id, p])).values(),
+    ];
+
+    setParticipantes(ordenarParticipantes(uniqueParticipants));
   }, [fetchedParticipants]);
 
   // Efeito para adicionar novo participante
@@ -56,18 +60,22 @@ export function Service({ idBase, rts }: ServiceProps) {
       if (!isAdding || !userData?.data) return;
 
       const userFromApi = userData.data;
-      const exists = participantes.some(
-        (p) => p.id === userFromApi.id && p.baseName === idBase
-      );
 
-      if (!exists) {
+      // Garantir que o ID é único antes de adicionar
+      if (!participantes.some((p) => p.id === userFromApi.id)) {
         const novoParticipante = { ...userFromApi, baseName: idBase };
 
         try {
           await put(novoParticipante);
-          setParticipantes((prev) =>
-            ordenarParticipantes([...prev, novoParticipante])
-          );
+
+          setParticipantes((prev) => {
+            const uniqueParticipants = [
+              ...new Map(
+                [...prev, novoParticipante].map((p) => [p.id, p])
+              ).values(),
+            ];
+            return ordenarParticipantes(uniqueParticipants);
+          });
         } catch (error) {
           console.error("Erro ao adicionar participante:", error);
           alert("Erro ao salvar participante!");
@@ -165,7 +173,6 @@ export function Service({ idBase, rts }: ServiceProps) {
 
   const getUsers = async () => {
     if (!nome.trim()) return;
-
     try {
       setIsAdding(true);
       setSearchName(nome);

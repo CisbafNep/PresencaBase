@@ -11,8 +11,8 @@ export function Menu() {
       }}
     >
       <div style={{ justifyContent: "center" }}></div>
-      <div className="bodyMenu">
-        <img src={image} width="500px" style={{ alignItems: "center" }} />
+      <div className="body_menu">
+        <img src={image} alt="NEP" className="responsive-image" />
 
         <p style={{ textAlign: "center" }}></p>
         <div>

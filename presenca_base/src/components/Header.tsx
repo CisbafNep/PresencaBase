@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
 import icon from "../assets/iconx.png";
-
+import "../styles/main.css";
 interface HeaderProps {
   toggleSidebar: () => void;
 }
@@ -8,7 +7,14 @@ interface HeaderProps {
 export function Header({ toggleSidebar }: HeaderProps) {
   return (
     <header className="main-header">
-      <img src={icon} className="logox" width="150px" alt="Logo" />
+      <button
+        className="logo-btn "
+        style={{ margin: "none", border: "none", background: "none" }}
+      >
+        <a href="/">
+          <img src={icon} className="logox" width="150px" alt="Logo" />
+        </a>
+      </button>
       <button
         className="menu-toggle"
         style={{
@@ -20,10 +26,16 @@ export function Header({ toggleSidebar }: HeaderProps) {
         }}
         onClick={toggleSidebar}
       ></button>
-      <Link to="/">VOLTAR AO MENU</Link>
-      <Link to="/nilopolis">NILÓPOLIS</Link>
-      <Link to="/paracambi">PARACAMBI</Link>
-      <Link to="/queimados">QUEIMADOS</Link>
+
+      <button style={{ background: "none", border: "none" }}>
+        <a href="/nilopolis">NILÓPOLIS</a>
+      </button>
+      <button style={{ background: "none", border: "none" }}>
+        <a href="/paracambi">PARACAMBI</a>
+      </button>
+      <button style={{ background: "none", border: "none" }}>
+        <a href="/queimados">QUEIMADOS</a>
+      </button>
     </header>
   );
 }
