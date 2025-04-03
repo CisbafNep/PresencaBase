@@ -1,4 +1,5 @@
 import "../styles/menu.css";
+import image from "../assets/iconx.png";
 
 export function Menu() {
   return (
@@ -9,13 +10,11 @@ export function Menu() {
         height: "100%",
       }}
     >
+      <div style={{ justifyContent: "center" }}></div>
       <div className="bodyMenu">
-        <h1 className="title" style={{ textAlign: "center", color: "" }}>
-          Acompanhamento de presenças dos treinamentos nas bases SAMU
-        </h1>
-        <p style={{ textAlign: "center" }}>
-          <img src="/iconx.png" alt="" style={{ width: "250px" }} />
-        </p>
+        <img src={image} width="500px" style={{ alignItems: "center" }} />
+
+        <p style={{ textAlign: "center" }}></p>
         <div>
           <p style={{ textAlign: "center" }}>
             <a href="/nilopolis">

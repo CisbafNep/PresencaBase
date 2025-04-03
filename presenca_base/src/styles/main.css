@@ -3,12 +3,22 @@
   padding: 0;
   box-sizing: border-box;
 }
+.dark-theme {
+  --background-color: #121212;
+  --text-color: #ffffff;
+}
+
+.light-theme {
+  --background-color: #ffffff;
+  --text-color: #000000;
+}
 
 body {
   display: block;
   font-family: Arial, sans-serif;
-  background: var(--color);
-  color: var(--ltr);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
   width: 100% !important;
   height: 100% !important;
 }

@@ -2,7 +2,6 @@
   font-family: Arial, sans-serif;
   align-items: center;
   position: absolute;
-  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -20,25 +19,12 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 8px 10px 0 red; /* Cor inicial da sombra */
-  animation: alternate-shadow 1.5s infinite;
+  box-shadow: 5px 5px 5px rgb(95, 92, 92);
 }
 a {
   text-decoration: none;
   color: #333;
 }
 .btz:hover {
-  background: #8a8585;
-  color: #fff;
   transform: scale(1.2, 1.2);
-}
-
-@keyframes alternate-shadow {
-  0%,
-  100% {
-    box-shadow: 0 8px 10px 0 red; /* Sombra vermelha no início e fim */
-  }
-  50% {
-    box-shadow: 0 8px 10px 0 yellow; /* Sombra amarela no meio */
-  }
 }

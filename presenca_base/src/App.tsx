@@ -7,17 +7,29 @@ import { QueimadosContent } from "./components/QueimadosiContent.tsx";
 import RtsNilopolis from "./pags/RtsNilopolis.tsx";
 import RTsParacambi from "./pags/RtsParacambi.tsx";
 import RtsQueimados from "./pags/RtsQueimados.tsx";
-import { createTheme, ThemeProvider } from "@mui/material";
 import { Menu } from "./components/Menu.tsx";
 import { useEffect, useRef, useState } from "react";
 import { Layout } from "./components/Layout.tsx";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [darkMode] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const reloadFlag = useRef(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  // Atualização de tabelas
+  const location = useLocation();
+  const previousPath = useRef(location.pathname);
+
+  useEffect(() => {
+    if (previousPath.current !== location.pathname && !reloadFlag.current) {
+      reloadFlag.current = true;
+      previousPath.current = location.pathname;
+
+      requestAnimationFrame(() => {
+        window.location.reload();
+      });
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -25,25 +37,12 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const theme = createTheme({
-    palette: {
-      mode: darkMode ? "dark" : "light",
-    },
-  });
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   const showSidebarToggle = windowWidth < 768;
 
-  const location = useLocation();
-  const previousPath = useRef(location.pathname);
-
-  useEffect(() => {
-    if (previousPath.current !== location.pathname) {
-      previousPath.current = location.pathname;
-      window.location.reload();
-    }
-  }, [location.pathname]);
-
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Routes>
         <Route path="" element={<Menu />} />
         <Route path="/nilopolis" element={<NilopolisContent />} />
@@ -56,12 +55,11 @@ function App() {
 
       <Layout
         children={showSidebarToggle}
-        darkMode={darkMode}
         toggleSidebar={toggleSidebar}
         isSidebarOpen={isSidebarOpen}
         windowWidth={windowWidth}
       />
-    </ThemeProvider>
+    </>
   );
 }
 

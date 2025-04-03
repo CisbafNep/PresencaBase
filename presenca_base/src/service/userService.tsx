@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Participant } from "../types";
 import { useGetUser } from "../hooks/getUsers";
 import { usePutUser } from "../hooks/putUsers";
-import { Chart } from "chart.js/auto";
-import { Alert, Button, CircularProgress, Input } from "@mui/material";
+import { Button, Input, Alert, CircularProgress, Box } from "@mui/material";
 import { useGetUserLive } from "../hooks/getUsersLive";
-import * as XLSX from "xlsx";
 import { useGetAllUsers } from "../hooks/getAllUsers";
+import { ChartComponent } from "./ChartComponent";
+import { ParticipantsTable } from "./ParticipantsTable";
+import { exportParticipantsToXLS } from "./exportUtils";
 
 interface ServiceProps {
   idBase: string;
@@ -14,136 +15,113 @@ interface ServiceProps {
 }
 
 export function Service({ idBase, rts }: ServiceProps) {
+  // Estados
   const [nome, setNome] = useState("");
   const [searchName, setSearchName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [participantes, setParticipantes] = useState<Participant[]>([]);
 
-  const { data: userData, error, isLoading } = useGetUser(searchName);
+  // Hooks customizados
+  const { data: userData, isLoading } = useGetUser(searchName);
   const { mutateAsync: put } = usePutUser("");
-  const chartRef = useRef<HTMLCanvasElement>(null);
-  const chartInstance = useRef<Chart | null>(null);
-  const participantsQueries = useGetUserLive(
-    Array.isArray(participantes) ? participantes.filter((p) => p) : []
-  );
-  const previousData = useRef<Participant[]>([]);
-
-  // Hook para buscar todos os participantes do banco com o baseName atual
   const {
-    data: fetchedParticipants = [],
+    data: fetchedParticipants,
     isLoading: isLoadingParticipants,
     isError: isErrorParticipants,
   } = useGetAllUsers({ baseName: idBase || "" });
+  const participantsQueries = useGetUserLive(participantes.filter((p) => p));
+  const previousData = useRef<Participant[]>([]);
 
-  // Atualiza os participantes com os dados da API
+  // Efeito para carregar participantes iniciais
   useEffect(() => {
-    if (Array.isArray(fetchedParticipants)) {
-      setParticipantes(fetchedParticipants);
-    } else if (fetchedParticipants && "data" in fetchedParticipants) {
-      setParticipantes(
-        Array.isArray(fetchedParticipants.data)
-          ? fetchedParticipants.data
-          : [fetchedParticipants.data]
-      );
-    }
-  }, [fetchedParticipants]);
-
-  // Adiciona usuário quando os dados da API chegam
-  useEffect(() => {
-    const adicionarNovoParticipante = async () => {
-      if (isAdding && userData?.data) {
-        const userFromApi = userData.data;
-
-        // Verifica se já existe com o baseName atualizado
-        const userExists = participantes.some(
-          (p) => p.id === userFromApi.id && p.baseName === idBase
+    const loadParticipants = () => {
+      if (Array.isArray(fetchedParticipants)) {
+        setParticipantes(fetchedParticipants);
+      } else if (fetchedParticipants?.data) {
+        setParticipantes(
+          Array.isArray(fetchedParticipants.data)
+            ? fetchedParticipants.data
+            : [fetchedParticipants.data]
         );
-
-        if (!userExists) {
-          const novoParticipante = {
-            ...userFromApi,
-            baseName: idBase,
-          };
-
-          // Atualiza primeiro no backend
-          await put(novoParticipante);
-
-          // Depois atualiza o estado local
-          setParticipantes((prev) => [...prev, novoParticipante]);
-          setNome("");
-        } else {
-          alert("Usuário já está na lista!");
-        }
-
-        setIsAdding(false);
-        setSearchName("");
       }
     };
 
-    adicionarNovoParticipante();
-  }, [userData, isAdding, idBase]);
-  const ordenarParticipantes = (lista: Participant[]) => {
-    return [...lista].sort((a, b) => a.name.localeCompare(b.name));
-  };
+    loadParticipants();
+  }, [fetchedParticipants]);
 
-  // Trata erros na busca
+  // Efeito para adicionar novo participante
   useEffect(() => {
-    if (isAdding && error) {
-      console.error("Erro na busca:", error);
-      alert("Erro ao buscar usuário! Verifique o console para detalhes.");
+    const handleAddParticipant = async () => {
+      if (!isAdding || !userData?.data) return;
+
+      const userFromApi = userData.data;
+      const exists = participantes.some(
+        (p) => p.id === userFromApi.id && p.baseName === idBase
+      );
+
+      if (!exists) {
+        const novoParticipante = { ...userFromApi, baseName: idBase };
+
+        try {
+          await put(novoParticipante);
+          setParticipantes((prev) =>
+            ordenarParticipantes([...prev, novoParticipante])
+          );
+        } catch (error) {
+          console.error("Erro ao adicionar participante:", error);
+          alert("Erro ao salvar participante!");
+        }
+      } else {
+        alert("Usuário já está na lista!");
+      }
+
       setIsAdding(false);
       setSearchName("");
-    }
-  }, [error, isAdding]);
+      setNome("");
+    };
 
-  // Atualiza os participantes conforme as queries de dados ao vivo
+    handleAddParticipant();
+  }, [userData, isAdding, idBase, participantes, put]);
+
+  // Efeito para atualização em tempo real
   useEffect(() => {
     const newData = participantsQueries
       .filter((q) => q.isSuccess)
       .map((q) => q.data!)
       .filter(Boolean);
 
-    if (
-      Array.isArray(newData) &&
-      JSON.stringify(newData) !== JSON.stringify(previousData.current)
-    ) {
+    if (JSON.stringify(newData) !== JSON.stringify(previousData.current)) {
       setParticipantes((prev) =>
-        Array.isArray(prev)
-          ? prev.map((p) => newData.find((nd) => nd.id === p.id) || p)
-          : prev
+        prev.map((p) => newData.find((nd) => nd.id === p.id) || p)
       );
-
       previousData.current = newData;
     }
   }, [participantsQueries]);
-  // Atualiza presença ou falta e realiza o PUT no backend
-  // Função para atualizar presenças
+
+  // Funções de manipulação
+  const ordenarParticipantes = (lista: Participant[]) =>
+    [...lista].sort((a, b) => a.name.localeCompare(b.name));
+
   const atualizarPresenca = async (id: number, tipo: "presenca" | "falta") => {
-    try {
-      const updated = participantes.map((p) => {
-        if (p.id === id) {
-          const newPresences =
-            tipo === "presenca" ? p.presences + 1 : p.presences;
-          const newFaults = tipo === "falta" ? p.faults + 1 : p.faults;
-          return { ...p, presences: newPresences, faults: newFaults };
-        }
-        return p;
-      });
-
-      // Atualiza no backend e espera a resposta antes de atualizar o estado
-      const participantToUpdate = updated.find((p) => p.id === id);
-      if (participantToUpdate) {
-        await put(participantToUpdate);
-      } else {
-        console.error(`Participant with id ${id} not found.`);
+    const updated = participantes.map((p) => {
+      if (p.id === id) {
+        return {
+          ...p,
+          presences: tipo === "presenca" ? p.presences + 1 : p.presences,
+          faults: tipo === "falta" ? p.faults + 1 : p.faults,
+        };
       }
+      return p;
+    });
 
-      // Atualiza o estado local
+    try {
+      const participantToUpdate = updated.find((p) => p.id === id);
+      if (participantToUpdate) await put(participantToUpdate);
       setParticipantes(updated);
     } catch (error) {
-      console.error("Erro ao atualizar presença:", error);
-      alert("Erro na atualização! Verifique o console.");
+      console.error("Erro na atualização:", error);
+      alert("Erro ao atualizar dados!");
     }
   };
 
@@ -159,7 +137,6 @@ export function Service({ idBase, rts }: ServiceProps) {
       })
     );
   };
-
   const limparOuRemover = async (id: number, acao: "limpar" | "remover") => {
     if (acao === "limpar") {
       limpar(id);
@@ -172,143 +149,67 @@ export function Service({ idBase, rts }: ServiceProps) {
     }
   };
 
-  const finalizarPresencas = () => {
-    setParticipantes((prev) => {
-      const updated = prev.map((p) => {
-        const newP = { ...p, presences: 0, faults: 0, baseName: "Espera" };
-        put(newP);
-        return newP;
-      });
-      return updated.filter(() => false); // Remove todos os participantes
-    });
+  const finalizarPresencas = async () => {
+    try {
+      await Promise.all(
+        participantes.map((p) =>
+          put({ ...p, presences: 0, faults: 0, baseName: "Espera" })
+        )
+      );
+      setParticipantes([]);
+    } catch (error) {
+      console.error("Erro ao finalizar presenças:", error);
+      alert("Erro no processo de finalização!");
+    }
   };
-  const exportToXLS = () => {
-    const data = participantes.map((p) => ({
-      Nome: p.name,
-      Cargo: p.role,
-      Presença: p.presences,
-      Faltas: p.faults,
-    }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Participantes");
-    XLSX.writeFile(
-      wb,
-      `Participantes_${idBase.replace("Content", "")}_${
-        new Date().toISOString().split("T")[0]
-      }.xls`
-    );
-  };
+
   const getUsers = async () => {
-    if (nome.trim()) {
-      try {
-        setIsAdding(true);
-        setSearchName(nome);
+    if (!nome.trim()) return;
 
-        // Atualiza o baseName dos participantes existentes
-        await atualizarBaseNameExistente();
-
-        // A busca do novo usuário acontecerá automaticamente pelo useEffect
-        // quando searchName for atualizado
-      } catch (error) {
-        console.error("Erro ao atualizar base:", error);
-        alert("Erro na atualização da base!");
-      }
+    try {
+      setIsAdding(true);
+      setSearchName(nome);
+      await atualizarBaseNameExistente();
+    } catch (error) {
+      console.error("Erro na atualização:", error);
+      alert("Erro na atualização da base!");
     }
   };
 
   const atualizarBaseNameExistente = async () => {
-    const updatedParticipants = participantes.map((p) => ({
-      ...p,
-      baseName: idBase,
-    }));
-
-    setParticipantes(ordenarParticipantes(updatedParticipants));
-
-    await Promise.all(updatedParticipants.map((p) => put(p)));
-  };
-
-  const gerarGrafico = () => {
-    if (!chartRef.current) return;
-
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
+    const updated = participantes.map((p) => ({ ...p, baseName: idBase }));
+    try {
+      await Promise.all(updated.map((p) => put(p)));
+      setParticipantes(ordenarParticipantes(updated));
+    } catch (error) {
+      console.error("Erro na atualização:", error);
+      throw error;
     }
-
-    const ctx = chartRef.current.getContext("2d");
-    if (!ctx) return;
-
-    const labels = participantes.map((p) => p.name);
-    const presencaData = participantes.map((p) => p.presences);
-    const faltaData = participantes.map((p) => p.faults);
-
-    chartInstance.current = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          {
-            label: "Presenças",
-            data: presencaData,
-            backgroundColor: "rgba(75, 168, 32, 0.8)",
-          },
-          {
-            label: "Faltas",
-            data: faltaData,
-            backgroundColor: "rgba(250, 21, 21, 0.8)",
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          tooltip: {
-            enabled: true,
-          },
-          legend: {
-            display: true,
-          },
-          datalabels: {
-            color: "white",
-            anchor: "center",
-            align: "center",
-            formatter: (value) => {
-              return value > 0 ? value : "";
-            },
-          },
-        },
-        scales: {
-          x: {
-            stacked: true,
-          },
-          y: {
-            beginAtZero: true,
-            stacked: true,
-            ticks: {
-              precision: 0,
-            },
-          },
-        },
-      },
-    });
   };
-
-  // Gera o gráfico apenas quando o estado showChart muda para true
-  useEffect(() => {
-    if (showChart) {
-      gerarGrafico();
-    }
-
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
-  }, [showChart, participantes]);
 
   return (
-    <div>
-      <div id="controls" className="controls" style={{ marginBottom: "10px" }}>
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        boxSizing: "border-box",
+      }}
+    >
+      {/* Controles superiores - Estilo original */}
+      <div
+        id="controls"
+        className="controls"
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "20px",
+          flexWrap: "wrap",
+          ...(window.matchMedia("(max-width: 768px)").matches
+            ? { flexDirection: "column" }
+            : {}),
+        }}
+      >
         <Input
           color="error"
           id={idBase}
@@ -320,122 +221,79 @@ export function Service({ idBase, rts }: ServiceProps) {
               getUsers();
             }
           }}
-          style={{ marginRight: "10px", color: "gray" }}
+          sx={{
+            flex: 1,
+            minWidth: "250px",
+            backgroundColor: "white",
+            borderRadius: "4px",
+            padding: "0 10px",
+            "& input": {
+              padding: "12px",
+            },
+          }}
         />
         <Button
           variant="contained"
           color="error"
           onClick={getUsers}
           disabled={isLoading}
+          sx={{
+            minWidth: "200px",
+            height: "56px",
+            "@media (max-width: 768px)": {
+              width: "100%",
+              height: "48px",
+            },
+          }}
         >
-          {isLoading ? "Buscando..." : "Adicionar participante"}
+          {isLoading ? (
+            <CircularProgress size={24} />
+          ) : (
+            "Adicionar participante"
+          )}
         </Button>
       </div>
       <br />
 
-      <table id={idBase}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Cargo</th>
-            <th>Presença</th>
-            <th>Faltas</th>
-            <th>Presença %</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(participantes) && participantes.length > 0 ? (
-            participantes.map((p, index) => (
-              <tr key={p.id ?? `temp-key-${index}`}>
-                {/* Usa um fallback caso id seja null/undefined */}
-                <td>{p.name}</td>
-                <td>{p.role}</td>
-                <td>{p.presences}</td>
-                <td>{p.faults}</td>
-                <td>
-                  {p.presences + p.faults > 0
-                    ? Math.round((p.presences / (p.presences + p.faults)) * 100)
-                    : 0}
-                  %
-                </td>
-                <td>
-                  <Button
-                    style={{
-                      padding: "3px",
-                      backgroundColor: "#31B404",
-                      color: "white",
-                      marginRight: "5px",
-                      cursor: "pointer",
-                      border: "1px solid #31B404",
-                    }}
-                    onClick={() => atualizarPresenca(p.id, "presenca")}
-                  >
-                    Presença
-                  </Button>
-                  <Button
-                    style={{
-                      padding: "3px",
-                      backgroundColor: "red",
-                      color: "white",
-                      marginRight: "5px",
-                      cursor: "pointer",
-                      border: "1px solid red",
-                    }}
-                    onClick={() => atualizarPresenca(p.id, "falta")}
-                  >
-                    Falta
-                  </Button>
-                  <select
-                    id={`acao-${p.id}`}
-                    style={{
-                      marginRight: "5px",
-                      cursor: "pointer",
-                      width: "80px",
-                      height: "40px",
-                      border: "3px solid",
-                      borderRadius: "4px",
-                      padding: "3px",
-                    }}
-                  >
-                    <option value="limpar">Limpar</option>
-                    <option value="remover">Remover</option>
-                  </select>
-                  <Button
-                    style={{
-                      backgroundColor: "orange",
-                      color: "white",
-                      cursor: "pointer",
-                      border: "1px solid orange",
-                      padding: "3px",
-                    }}
-                    onClick={() => {
-                      const select = document.getElementById(
-                        `acao-${p.id}`
-                      ) as HTMLSelectElement;
-                      limparOuRemover(
-                        p.id,
-                        select.value as "limpar" | "remover"
-                      );
-                    }}
-                  >
-                    Ação
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={6} style={{ textAlign: "center" }}>
-                Nenhum participante encontrado
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <br />
+      {/* Tabela com estilos originais */}
+      <div
+        style={{
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          marginBottom: "20px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <ParticipantsTable
+          participantes={participantes}
+          isLoading={isLoadingParticipants}
+          isError={isErrorParticipants}
+          onUpdatePresence={atualizarPresenca}
+          onClearOrRemove={limparOuRemover}
+        />
+      </div>
+      <br></br>
 
-      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+      {/* Controles inferiores - Estilo original */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: "10px",
+          margin: "20px 0",
+          flexWrap: "wrap",
+          "& button": {
+            flex: "1 1 180px",
+          },
+          "@media (max-width: 768px)": {
+            gap: "8px",
+            "& button": {
+              width: "100%",
+              height: "48px",
+            },
+          },
+        }}
+      >
         <Button
           color="success"
           variant="contained"
@@ -464,14 +322,16 @@ export function Service({ idBase, rts }: ServiceProps) {
         >
           Finalizar
         </Button>
-      </div>
+      </Box>
 
+      {/* Gráfico */}
       {showChart && (
         <div id={idBase}>
-          <canvas id={idBase} ref={chartRef}></canvas>
+          <ChartComponent participantes={participantes} />
         </div>
       )}
 
+      {/* Loading e erros - Estilo original */}
       {isLoadingParticipants && (
         <div style={{ padding: "20px", textAlign: "center" }}>
           <CircularProgress />
@@ -487,6 +347,7 @@ export function Service({ idBase, rts }: ServiceProps) {
 
       <br />
 
+      {/* Rodapé - Estilo original */}
       <div style={{ display: "flex", gap: "15px" }}>
         <Button
           variant="contained"
@@ -513,7 +374,7 @@ export function Service({ idBase, rts }: ServiceProps) {
             border: "none",
             color: "white",
           }}
-          onClick={exportToXLS}
+          onClick={() => exportParticipantsToXLS(participantes, idBase)}
         >
           Exportar para XLS
         </Button>
