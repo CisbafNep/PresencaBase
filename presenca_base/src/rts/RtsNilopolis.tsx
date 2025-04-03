@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom"; // Hook para pegar os parâmetros da URL
-import { atualizarTabela, gerarGrafico } from "./RtsService.tsx";
+import { atualizarTabela, gerarGrafico } from "./RtsService";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
 import { useGetAllUsers } from "../hooks/getAllUsers.ts";
