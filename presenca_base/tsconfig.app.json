@@ -22,5 +22,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "contents/ParacambiContent.tsx",
+    "contents/QueimadosiContent.tsx",
+    "contents/NilopolisContent.tsx"
+  ]
 }

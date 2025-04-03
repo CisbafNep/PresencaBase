@@ -1,12 +1,12 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { NilopolisContent } from "./components/NilopolisContent";
+import { NilopolisContent } from "./contents/NilopolisContent.tsx";
 import "./styles/variables.css";
 import "./styles/main.css";
-import { ParacambiContent } from "./components/ParacambiContent.tsx";
-import { QueimadosContent } from "./components/QueimadosiContent.tsx";
-import RtsNilopolis from "./pags/RtsNilopolis.tsx";
-import RTsParacambi from "./pags/RtsParacambi.tsx";
-import RtsQueimados from "./pags/RtsQueimados.tsx";
+import { ParacambiContent } from "./contents/ParacambiContent.tsx";
+import { QueimadosContent } from "./contents/QueimadosiContent.tsx";
+import RtsNilopolis from "./rts/RtsNilopolis.tsx";
+import RTsParacambi from "./rts/RtsParacambi.tsx";
+import RtsQueimados from "./rts/RtsQueimados.tsx";
 import { Menu } from "./components/Menu.tsx";
 import { useEffect, useRef, useState } from "react";
 import { Layout } from "./components/Layout.tsx";

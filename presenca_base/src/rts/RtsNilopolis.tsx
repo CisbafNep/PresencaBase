@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom"; // Hook para pegar os parâmetros da URL
-import { atualizarTabela, gerarGrafico } from "./RtsService";
+import { atualizarTabela, gerarGrafico } from "./RtsService.tsx";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
-import { useGetAllUsers } from "../hooks/getAllUsers";
+import { useGetAllUsers } from "../hooks/getAllUsers.ts";
 
 const RTsNilopolis = () => {
   const idTabela = "tabela-presenca-nilopolisrt";

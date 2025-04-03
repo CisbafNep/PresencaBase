@@ -223,7 +223,7 @@ export function Service({ idBase, rts }: ServiceProps) {
           }}
           sx={{
             flex: 1,
-            minWidth: "250px",
+            maxWidth: "280px",
             backgroundColor: "white",
             borderRadius: "4px",
             padding: "0 10px",
@@ -238,19 +238,14 @@ export function Service({ idBase, rts }: ServiceProps) {
           onClick={getUsers}
           disabled={isLoading}
           sx={{
-            minWidth: "200px",
-            height: "56px",
+            height: "40px",
             "@media (max-width: 768px)": {
               width: "100%",
               height: "48px",
             },
           }}
         >
-          {isLoading ? (
-            <CircularProgress size={24} />
-          ) : (
-            "Adicionar participante"
-          )}
+          {isLoading ? <CircularProgress size={24} /> : "Adicionar"}
         </Button>
       </div>
       <br />

@@ -69,7 +69,8 @@ export function ParticipantsTable({
                   color: "white",
                   marginRight: "5px",
                   cursor: "pointer",
-                  border: "1px solid #31B404",
+                  border: "2px solid rgb(59, 70, 55)",
+                  margin: "3px",
                 }}
                 onClick={() => onUpdatePresence(p.id, "presenca")}
               >
@@ -82,7 +83,8 @@ export function ParticipantsTable({
                   color: "white",
                   marginRight: "5px",
                   cursor: "pointer",
-                  border: "1px solid red",
+                  border: "2px solid rgb(92, 45, 45)",
+                  margin: "3px",
                 }}
                 onClick={() => onUpdatePresence(p.id, "falta")}
               >
@@ -94,10 +96,11 @@ export function ParticipantsTable({
                   marginRight: "5px",
                   cursor: "pointer",
                   width: "80px",
-                  height: "40px",
+                  height: "35px",
                   border: "3px solid",
                   borderRadius: "4px",
                   padding: "3px",
+                  margin: "3px",
                 }}
               >
                 <option value="limpar">Limpar</option>
@@ -108,8 +111,9 @@ export function ParticipantsTable({
                   backgroundColor: "orange",
                   color: "white",
                   cursor: "pointer",
-                  border: "1px solid orange",
+                  border: "2px solid rgb(116, 77, 28)",
                   padding: "3px",
+                  margin: "3px",
                 }}
                 onClick={() => {
                   const select = document.getElementById(

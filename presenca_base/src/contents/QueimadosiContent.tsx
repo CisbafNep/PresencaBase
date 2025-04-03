@@ -1,23 +1,18 @@
 import { Service } from "../service/userService.tsx";
-import { Header } from "./Header.tsx";
 import { useState } from "react";
+import { Header } from "../components/Header.tsx";
 
-export function ParacambiContent() {
-  const idBase = "PARACAMBI";
-
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export function QueimadosContent() {
+  const idBase = "QUEIMADOS";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.body.classList.toggle("light", !isDarkMode);
-  };
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   return (
-    <div id="contentparacambi" className="content active">
-      <Header toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+    <div id="contentqueimados" className="content active">
+      <Header toggleSidebar={toggleSidebar} />
       <details style={{ textAlign: "right" }}>
         <summary>
           <h3>Legendas: (clique para abrir)</h3>
@@ -49,7 +44,7 @@ export function ParacambiContent() {
         <img src="/Samu-logo.png" style={{ width: "120px" }} alt="SAMU Logo" />
       </p>
       <h1 style={{ textAlign: "center" }}>
-        Acompanhamento de presenças base SAMU Paracambi
+        Acompanhamento de presenças base SAMU Queimados
       </h1>
       <br />
       <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
@@ -57,7 +52,7 @@ export function ParacambiContent() {
       </h2>
       <br />
       <br />
-      <Service idBase={idBase} rts="/RtsParacambi" />
+      <Service idBase={idBase} rts="/RtsQueimados" />
     </div>
   );
 }

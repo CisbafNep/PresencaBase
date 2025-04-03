@@ -1,22 +1,18 @@
 import { Service } from "../service/userService.tsx";
+import { Header } from "../components/Header.tsx";
 import { useState } from "react";
-import { Header } from "./Header.tsx";
 
-export function QueimadosContent() {
-  const idBase = "QUEIMADOS";
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export function NilopolisContent() {
+  const idBase = "NILOPOLIS";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.body.classList.toggle("light", !isDarkMode);
-  };
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   return (
-    <div id="contentqueimados" className="content active">
-      <Header toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+    <div id="contentnilopolis" className="content active">
+      <Header toggleSidebar={toggleSidebar} />
       <details style={{ textAlign: "right" }}>
         <summary>
           <h3>Legendas: (clique para abrir)</h3>
@@ -48,7 +44,7 @@ export function QueimadosContent() {
         <img src="/Samu-logo.png" style={{ width: "120px" }} alt="SAMU Logo" />
       </p>
       <h1 style={{ textAlign: "center" }}>
-        Acompanhamento de presenças base SAMU Queimados
+        Acompanhamento de presenças base SAMU Nilópolis
       </h1>
       <br />
       <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
@@ -56,7 +52,7 @@ export function QueimadosContent() {
       </h2>
       <br />
       <br />
-      <Service idBase={idBase} rts="/RtsQueimados" />
+      <Service idBase={idBase} rts="/RtsNilopolis" />
     </div>
   );
 }
