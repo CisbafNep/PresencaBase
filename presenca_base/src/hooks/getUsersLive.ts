@@ -1,14 +1,14 @@
 import { useQueries, UseQueryOptions } from "@tanstack/react-query";
 import { Participant } from "../types";
+import { Enviroments } from "../env/variaveis";
 
 export function useGetUserLive(participants: Participant[]) {
   const validParticipants = Array.isArray(participants) ? participants : [];
+  const URL_API = Enviroments.REACT_APP_API;
 
   const fetchUser = async (name: string): Promise<Participant> => {
     try {
-      const response = await fetch(
-        `http://localhost:8060/user/${encodeURIComponent(name)}`
-      );
+      const response = await fetch(`${URL_API}/${encodeURIComponent(name)}`);
 
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
