@@ -4,8 +4,15 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: contents;
 }
-
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 20px;
+}
 .controls {
   display: flex;
   gap: 15px;
@@ -82,8 +89,8 @@
 
   /* Rodapé - Botões compactos */
   .footer-buttons {
-    display: flex;
-    gap: 8px;
+    display: inline-flex;
+    gap: 15px;
     padding-bottom: 20px;
     align-items: center; /* Centraliza os botões */
     justify-content: center; /* Centraliza os botões */
