@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Participant } from "../types";
 import { useGetUser } from "../hooks/getUsers";
 import { usePutUser } from "../hooks/putUsers";
-import { Button, Input, Alert, CircularProgress, Box } from "@mui/material";
+import { Button, Input, CircularProgress, Box } from "@mui/material";
 import { useGetUserLive } from "../hooks/getUsersLive";
 import { useGetAllUsers } from "../hooks/getAllUsers";
 import { ChartComponent } from "./ChartComponent";
 import { ParticipantsTable } from "./ParticipantsTable";
 import { exportParticipantsToXLS } from "./exportUtils";
+import "./service_styles/userService.css";
 
 interface ServiceProps {
   idBase: string;
@@ -195,28 +196,8 @@ export function Service({ idBase, rts }: ServiceProps) {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        maxWidth: "1200px",
-        margin: "0 auto",
-        boxSizing: "border-box",
-      }}
-    >
-      {/* Controles superiores - Estilo original */}
-      <div
-        id="controls"
-        className="controls"
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBottom: "20px",
-          flexWrap: "wrap",
-          ...(window.matchMedia("(max-width: 768px)").matches
-            ? { flexDirection: "column" }
-            : {}),
-        }}
-      >
+    <div className="service-wrapper">
+      <div id="controls" className="controls">
         <Input
           color="error"
           id={idBase}
@@ -228,45 +209,21 @@ export function Service({ idBase, rts }: ServiceProps) {
               getUsers();
             }
           }}
-          sx={{
-            flex: 1,
-            maxWidth: "280px",
-            backgroundColor: "white",
-            borderRadius: "4px",
-            padding: "0 10px",
-            "& input": {
-              padding: "12px",
-            },
-          }}
+          className="search-input"
         />
         <Button
           variant="contained"
           color="error"
           onClick={getUsers}
           disabled={isLoading}
-          sx={{
-            height: "40px",
-            "@media (max-width: 768px)": {
-              width: "100%",
-              height: "48px",
-            },
-          }}
+          className="add-button"
         >
           {isLoading ? <CircularProgress size={24} /> : "Adicionar"}
         </Button>
       </div>
       <br />
 
-      {/* Tabela com estilos originais */}
-      <div
-        style={{
-          overflowX: "auto",
-          WebkitOverflowScrolling: "touch",
-          marginBottom: "20px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
+      <div className="table-container">
         <ParticipantsTable
           participantes={participantes}
           isLoading={isLoadingParticipants}
@@ -299,13 +256,7 @@ export function Service({ idBase, rts }: ServiceProps) {
         <Button
           color="success"
           variant="contained"
-          style={{
-            width: "150px",
-            color: "white",
-            border: "none",
-            padding: "10px",
-            cursor: "pointer",
-          }}
+          className="action-button"
           onClick={() => setShowChart((prev) => !prev)}
         >
           Gerar Gráfico
@@ -313,13 +264,7 @@ export function Service({ idBase, rts }: ServiceProps) {
         <Button
           color="error"
           variant="contained"
-          style={{
-            width: "150px",
-            color: "#fff",
-            border: "none",
-            padding: "10px",
-            cursor: "pointer",
-          }}
+          className="action-button"
           onClick={finalizarPresencas}
         >
           Finalizar
@@ -332,53 +277,44 @@ export function Service({ idBase, rts }: ServiceProps) {
           <ChartComponent participantes={participantes} />
         </div>
       )}
-
-      {/* Loading e erros - Estilo original */}
-      {isLoadingParticipants && (
-        <div style={{ padding: "20px", textAlign: "center" }}>
-          <CircularProgress />
-          <p>Carregando participantes...</p>
-        </div>
-      )}
-
-      {isErrorParticipants && (
-        <Alert severity="error" style={{ margin: "20px" }}>
-          Erro ao carregar participantes!
-        </Alert>
-      )}
-
       <br />
-
       {/* Rodapé - Estilo original */}
-      <div style={{ display: "flex", gap: "15px" }}>
+      <div className="footer-buttons">
         <Button
           variant="contained"
-          style={{
-            width: "200px",
-            padding: "10px",
-            border: "none",
-            background: "black",
-          }}
+          color="secondary"
+          size="large"
+          className="footer-button"
         >
           <a
             href={`${rts}?idBase=${idBase}`}
-            style={{ textDecoration: "none", color: "#fff" }}
+            style={{ textDecoration: "none", color: "white" }}
           >
             Checar relatórios RTs
           </a>
         </Button>
         <Button
-          color="secondary"
           variant="contained"
-          style={{
-            width: "180px",
-            padding: "10px",
-            border: "none",
-            color: "white",
-          }}
+          className="footer-button"
+          color="secondary"
+          size="large"
+          style={{ color: "white" }}
           onClick={() => exportParticipantsToXLS(participantes, idBase)}
         >
           Exportar para XLS
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="large"
+          className="footer-button"
+        >
+          <a
+            href={`gerador_QRCode/?idBase=${idBase}`}
+            style={{ color: "white" }}
+          >
+            Gerar QR Code
+          </a>
         </Button>
       </div>
     </div>

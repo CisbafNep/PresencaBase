@@ -1,0 +1,126 @@
+.body-content {
+  padding: 20px 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+/* CSS Global */
+html,
+#root {
+  height: 100%;
+}
+
+.body-simulator {
+  min-height: 100vh;
+  flex-direction: column;
+  position: relative;
+  width: 100vw;
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px 15px;
+  max-width: 1200px;
+  margin: 80px auto 0; /* Compensa o header fixo */
+}
+
+/* Header Fixo */
+.header-content {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.samu-logo {
+  width: 120px;
+  margin: 0 auto 20px;
+  display: block;
+}
+
+/* Ajustes para Mobile */
+@media (max-width: 768px) {
+  .content-container {
+    margin-top: 60px;
+    padding: 15px 10px;
+  }
+
+  .body-simulator {
+    padding-top: 0;
+  }
+
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-content h2 {
+    font-size: 1.2rem;
+  }
+}
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 15px;
+}
+
+.header-content {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.samu-logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+.legendas {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.legendas summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.legendas-content {
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .body-content {
+    overflow: auto;
+    padding: 15px 10px;
+  }
+  #contentnilopolis {
+    padding-top: 60px;
+    padding-left: 15px;
+  }
+  #contentparacambi {
+    padding-top: 60px;
+    padding-left: 15px;
+  }
+  #contentqueimados {
+    padding-top: 60px;
+    padding-left: 15px;
+  }
+
+  .content-wrapper {
+    padding: 15px;
+  }
+
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-content h2 {
+    font-size: 1.2rem;
+  }
+
+  .legendas {
+    margin: 15px 0;
+    padding: 10px;
+  }
+}

@@ -1,12 +1,13 @@
 import icon from "../assets/iconx.png";
 import "../styles/main.css";
+
 interface HeaderProps {
   toggleSidebar: () => void;
+  isSidebarOpen: boolean;
 }
-
-export function Header({ toggleSidebar }: HeaderProps) {
+export function Header({ toggleSidebar, isSidebarOpen }: HeaderProps) {
   return (
-    <header className="main-header">
+    <header className={`main-header ${isSidebarOpen ? "sidebar-open" : ""}`}>
       <button
         className="logo-btn "
         style={{ margin: "none", border: "none", background: "none" }}

@@ -28,40 +28,45 @@ const RTsParacambi = () => {
 
   return (
     <>
-      <RtSHeader title={`${idBase}`} url={`/paracambi`} />
-      <main>
-        <div className="content active" id="contentParacambirt">
-          <p style={{ textAlign: "center" }}>
-            <img alt="" src="/Samu-logo.png" style={{ width: "120px" }} />
+      <RtSHeader />
+
+      <body className="body-simulator" id="contentparacambirt">
+        <div className="centered-content">
+          <p className="logo-container">
+            <img
+              alt="SAMU Logo"
+              src="/Samu-logo.png"
+              className="responsive-logo"
+            />
           </p>
-          <h1 style={{ textAlign: "center" }}>
+          <h1 className="title">
             Acompanhamento de presenças base SAMU {idBase}
           </h1>
-          <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
-            Controle de presenças
-          </h2>
-          <p>
+          <h2 className="subtitle">Controle de presenças</h2>
+          <p className="observation">
             Obs: Para estar apto a receber o certificado de conclusão, o
             colaborador deve obter o mínimo de
             <b> 70%(setenta porcento) </b> da presença nos treinamentos.
           </p>
-          <table id={idTabela}>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Cargo</th>
-                <th>Presença</th>
-                <th>Faltas</th>
-                <th>Presença %</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <div id="chart-container-paracambirt">
-            <canvas id={idChart}></canvas>
+          <div className="table-wrapper">
+            <table id="tabela-presenca-paracambirt">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Cargo</th>
+                  <th>Presença</th>
+                  <th>Faltas</th>
+                  <th>Presença %</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div className="chart-container" id="chart-container-paracambirt">
+              <canvas id="presenca-chart-paracambirt"></canvas>
+            </div>
           </div>
         </div>
-      </main>
+      </body>
     </>
   );
 };

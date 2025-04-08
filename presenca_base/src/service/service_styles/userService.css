@@ -1,0 +1,103 @@
+/* Service.css */
+.service-wrapper {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .service-container {
+    padding: 15px;
+    padding-top: 80px;
+    max-width: 100%;
+    margin: 0 auto; /* Centraliza o container */
+    box-sizing: border-box; /* Considera padding na largura total */
+  }
+
+  /* Controles superiores - Campo de input */
+  .controls {
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+    align-items: center; /* Centraliza os itens */
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%; /* Ocupa toda a largura disponível */
+    max-width: 100% !important;
+    order: -1;
+    margin: 0 auto; /* Centraliza o input */
+  }
+
+  /* Botão de adicionar */
+  .add-button {
+    width: 100%;
+    max-width: 100%; /* Garante que não ultrapasse a largura */
+    height: 42px;
+    font-size: 14px !important;
+    margin: 0 auto; /* Centralização adicional */
+  }
+
+  /* Tabela - Mantém scroll horizontal */
+  .table-container {
+    width: 100%;
+    margin: 0 auto; /* Centraliza a tabela */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Botões abaixo da tabela */
+  .action-buttons-container {
+    margin-top: 25px;
+    gap: 8px;
+    display: flex;
+    justify-content: center; /* Centraliza os botões */
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .action-button {
+    flex: 1 1 45%;
+    min-width: 120px !important;
+    height: 38px;
+    font-size: 13px !important;
+    margin: 0 5px; /* Espaçamento equilibrado */
+  }
+
+  /* Rodapé - Botões compactos */
+  .footer-buttons {
+    display: flex;
+    gap: 8px;
+    padding-bottom: 20px;
+    align-items: center; /* Centraliza os botões */
+    justify-content: center; /* Centraliza os botões */
+    flex-wrap: wrap; /* Permite quebra de linha */
+  }
+
+  .footer-button {
+    width: 300px;
+    height: 40px;
+  }
+
+  /* Reset geral de margens */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}

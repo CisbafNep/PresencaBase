@@ -18,9 +18,11 @@ export function Layout({
 }: LayoutProps) {
   const location = useLocation();
   const isRtsRoute = [
+    "/gerador_QRCode/",
     "/RtsNilopolis",
     "/RtsParacambi",
     "/RtsQueimados",
+    "/leitor",
     "/",
   ].includes(location.pathname);
   const showSidebar = windowWidth < 768 && !isRtsRoute;

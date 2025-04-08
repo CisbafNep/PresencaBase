@@ -10,6 +10,8 @@ import RtsQueimados from "./rts/RtsQueimados.tsx";
 import { Menu } from "./components/Menu.tsx";
 import { useEffect, useRef, useState } from "react";
 import { Layout } from "./components/Layout.tsx";
+import QRCodeGenerator from "./gerador_QRCode/QRCodeGenerator.tsx";
+import LeitorQRCode from "./leitor_qrcode/LeitorQRCode.tsx";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -51,6 +53,8 @@ function App() {
         <Route path="/RtsNilopolis" element={<RtsNilopolis />} />
         <Route path="/RtsParacambi" element={<RTsParacambi />} />
         <Route path="/RtsQueimados" element={<RtsQueimados />} />
+        <Route path="/gerador_QRCode" element={<QRCodeGenerator />} />
+        <Route path="/leitor" element={<LeitorQRCode />} />
       </Routes>
 
       <Layout
