@@ -4,6 +4,8 @@ export interface Participant {
   role: string;
   presences: number;
   faults: number;
+  faultsFinal: number;
+  presencesFinal: number;
   baseName: string;
 }
 

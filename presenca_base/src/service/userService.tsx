@@ -138,7 +138,13 @@ export function Service({ idBase, rts }: ServiceProps) {
     setParticipantes(
       participantes.map((p) => {
         if (p.id === id) {
-          const updated = { ...p, presences: 0, faults: 0 };
+          const updated = {
+            ...p,
+            presences: 0,
+            faults: 0,
+            presencesFinal: 0,
+            faultsFinal: 0,
+          };
           put(updated);
           return updated;
         }
@@ -162,7 +168,14 @@ export function Service({ idBase, rts }: ServiceProps) {
     try {
       await Promise.all(
         participantes.map((p) =>
-          put({ ...p, presences: 0, faults: 0, baseName: "Espera" })
+          put({
+            ...p,
+            presences: 0,
+            faults: 0,
+            presencesFinal: 0,
+            faultsFinal: 0,
+            baseName: "Espera",
+          })
         )
       );
       setParticipantes([]);

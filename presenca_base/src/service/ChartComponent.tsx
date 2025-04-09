@@ -21,8 +21,8 @@ export function ChartComponent({ participantes }: ChartComponentProps) {
     if (!ctx) return;
 
     const labels = participantes.map((p) => p.name);
-    const presencaData = participantes.map((p) => p.presences);
-    const faltaData = participantes.map((p) => p.faults);
+    const presencaData = participantes.map((p) => p.presencesFinal);
+    const faltaData = participantes.map((p) => p.faultsFinal);
 
     chartInstance.current = new Chart(ctx, {
       type: "bar",

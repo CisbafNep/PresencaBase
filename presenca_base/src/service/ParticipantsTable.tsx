@@ -75,11 +75,13 @@ export function ParticipantsTable({
             <tr key={p.id ?? `temp-key-${index}`} className="table_row">
               <td className="table_cell">{p.name}</td>
               <td className="table_cell">{p.role}</td>
-              <td className="table_cell numericCell">{p.presences}</td>
-              <td className="table_cell numericCell">{p.faults}</td>
+              <td className="table_cell numericCell">{p.presencesFinal}</td>
+              <td className="table_cell numericCell">{p.faultsFinal}</td>
               <td className="table_cell numericCell">
                 {p.presences + p.faults > 0
-                  ? Math.round((p.presences / (p.presences + p.faults)) * 100)
+                  ? Math.round(
+                      (p.presencesFinal / (p.faultsFinal + p.faults)) * 100
+                    )
                   : 0}
                 %
               </td>

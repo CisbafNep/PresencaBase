@@ -59,9 +59,11 @@ function QRCodeGenerator() {
     const participant: Omit<Participant, "id"> = {
       name: trimmedName,
       role,
-      baseName, // valor proveniente da URL
+      baseName: "Espera", // valor proveniente da URL
       presences: 0,
       faults: 0,
+      presencesFinal: 0,
+      faultsFinal: 0,
     };
 
     await sendDataToAPI(participant);
