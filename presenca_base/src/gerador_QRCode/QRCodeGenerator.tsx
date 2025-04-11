@@ -29,6 +29,9 @@ function QRCodeGenerator() {
   const sendDataToAPI = async (participant: Omit<Participant, "id">) => {
     setStatus("Enviando dados...");
     try {
+      if (!apiUrl) {
+        throw new Error("API URL is not defined");
+      }
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" },
