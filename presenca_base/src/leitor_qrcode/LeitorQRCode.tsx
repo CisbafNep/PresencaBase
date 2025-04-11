@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import "./leitor.css";
+import { Enviroments } from "../env/variaveis";
 
 interface UserData {
   name: string;
@@ -79,7 +80,7 @@ export function LeitorQRCode() {
     }
 
     try {
-      const response = await fetch("http://localhost:8060/user/presence", {
+      const response = await fetch(Enviroments.REACT_APP_API + "/presence", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: userData.name, role: userData.role }),
