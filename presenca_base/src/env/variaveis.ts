@@ -1,3 +1,3 @@
 export const Enviroments = {
-  REACT_APP_API: "http://192.168.1.118:8060/user",
+  REACT_APP_API: process.env.BACK_URL,
 };
