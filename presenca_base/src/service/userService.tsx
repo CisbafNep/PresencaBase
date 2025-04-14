@@ -295,7 +295,7 @@ export function Service({ idBase, rts }: ServiceProps) {
       <div className="footer-buttons">
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           size="large"
           className="footer-button"
         >
@@ -309,7 +309,7 @@ export function Service({ idBase, rts }: ServiceProps) {
         <Button
           variant="contained"
           className="footer-button"
-          color="secondary"
+          color="primary"
           size="large"
           style={{ color: "white" }}
           onClick={() => exportParticipantsToXLS(participantes, idBase)}
@@ -318,7 +318,7 @@ export function Service({ idBase, rts }: ServiceProps) {
         </Button>
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           size="large"
           className="footer-button"
         >

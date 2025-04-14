@@ -10,7 +10,6 @@ const apiUrl = Enviroments.REACT_APP_API;
 
 function QRCodeGenerator() {
   const location = useLocation();
-  // Extrai o parâmetro "idBase" da query string
   const queryParams = new URLSearchParams(location.search);
   const idBase = queryParams.get("idBase") || "";
 
@@ -21,7 +20,6 @@ function QRCodeGenerator() {
   const [status, setStatus] = useState("");
   const qrRef = useRef<HTMLDivElement>(null);
 
-  // Atualiza o estado se a URL mudar
   useEffect(() => {
     setBaseName(idBase);
   }, [idBase]);
@@ -29,9 +27,8 @@ function QRCodeGenerator() {
   const sendDataToAPI = async (participant: Omit<Participant, "id">) => {
     setStatus("Enviando dados...");
     try {
-      if (!apiUrl) {
-        throw new Error("API URL is not defined");
-      }
+      if (!apiUrl) throw new Error("API URL is not defined");
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" },
@@ -53,6 +50,15 @@ function QRCodeGenerator() {
   };
 
   const handleGenerate = async () => {
+    if (generated) {
+      // Resetar todos os campos e estado
+      setName("");
+      setRole("");
+      setGenerated(false);
+      setStatus("");
+      return;
+    }
+
     const trimmedName = name.trim();
     if (!trimmedName || !role) {
       alert("Por favor, preencha todos os campos!");
@@ -62,7 +68,7 @@ function QRCodeGenerator() {
     const participant: Omit<Participant, "id"> = {
       name: trimmedName,
       role,
-      baseName: "Espera", // valor proveniente da URL
+      baseName: "Espera",
       presences: 0,
       faults: 0,
       presencesFinal: 0,
@@ -88,38 +94,44 @@ function QRCodeGenerator() {
     <div className="container">
       <h1>Gerar QR Code para Validação de Presença</h1>
 
-      <div className="form-group">
-        <label htmlFor="colaborador">Colaborador:</label>
-        <input
-          id="colaborador"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Digite o nome..."
-        />
-      </div>
+      {!generated && (
+        <>
+          <div className="form-group">
+            <label htmlFor="colaborador">Colaborador:</label>
+            <input
+              id="colaborador"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Digite o nome..."
+            />
+          </div>
 
-      <div className="form-group">
-        <label htmlFor="cargo">Cargo:</label>
-        <select
-          id="cargo"
-          value={role}
-          onChange={(e) => setRole(e.target.value as Cargo)}
-        >
-          <option value="">Selecione</option>
-          <option value="Médico(a)">Médico(a)</option>
-          <option value="Enfermeiro(a)">Enfermeiro(a)</option>
-          <option value="Condutor">Condutor</option>
-          <option value="Téc. Enfermagem">Téc. Enfermagem</option>
-        </select>
-      </div>
+          <div className="form-group">
+            <label htmlFor="cargo">Cargo:</label>
+            <select
+              id="cargo"
+              value={role}
+              onChange={(e) => setRole(e.target.value as Cargo)}
+            >
+              <option value="">Selecione</option>
+              <option value="Médico(a)">Médico(a)</option>
+              <option value="Enfermeiro(a)">Enfermeiro(a)</option>
+              <option value="Condutor">Condutor</option>
+              <option value="Téc. Enfermagem">Téc. Enfermagem</option>
+            </select>
+          </div>
+        </>
+      )}
 
-      <button className="generate-btn" onClick={handleGenerate}>
-        Gerar QR Code
-      </button>
-      <button className="generate-btn" onClick={() => window.history.back()}>
-        Voltar
-      </button>
+      <div className="button-group">
+        <button className="generate-btn" onClick={handleGenerate}>
+          {generated ? "Gerar Outro QR Code" : "Gerar QR Code"}
+        </button>
+        <button className="generate-btn" onClick={() => window.history.back()}>
+          Voltar
+        </button>
+      </div>
 
       {generated && (
         <div className="qr-section">
