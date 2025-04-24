@@ -71,8 +71,6 @@ function QRCodeGenerator() {
       baseName: "Espera",
       presences: 0,
       faults: 0,
-      presences: 0,
-      presences: 0,
     };
 
     await sendDataToAPI(participant);

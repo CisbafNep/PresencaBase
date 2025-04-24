@@ -172,8 +172,6 @@ export function Service({ idBase, rts }: ServiceProps) {
             ...p,
             presences: 0,
             faults: 0,
-            presences: 0,
-            presences: 0,
             baseName: "Espera",
           })
         )
