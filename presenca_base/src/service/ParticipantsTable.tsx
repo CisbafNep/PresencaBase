@@ -79,9 +79,7 @@ export function ParticipantsTable({
               <td className="table_cell numericCell">{p.faults}</td>
               <td className="table_cell numericCell">
                 {p.presences + p.faults > 0
-                  ? Math.round(
-                    (p.presences / (p.faults + p.faults)) * 100
-                  )
+                  ? Math.round((p.presences / 9) * 100)
                   : 0}
                 %
               </td>
