@@ -42,10 +42,10 @@ export function Service({ idBase, rts }: ServiceProps) {
     const participantesArray = Array.isArray(fetchedParticipants)
       ? fetchedParticipants
       : fetchedParticipants?.data
-      ? Array.isArray(fetchedParticipants.data)
-        ? fetchedParticipants.data
-        : [fetchedParticipants.data]
-      : [];
+        ? Array.isArray(fetchedParticipants.data)
+          ? fetchedParticipants.data
+          : [fetchedParticipants.data]
+        : [];
 
     // Criar um Map para garantir IDs únicos
     const uniqueParticipants = [
@@ -172,8 +172,8 @@ export function Service({ idBase, rts }: ServiceProps) {
             ...p,
             presences: 0,
             faults: 0,
-            presencesFinal: 0,
-            faultsFinal: 0,
+            presences: 0,
+            presences: 0,
             baseName: "Espera",
           })
         )

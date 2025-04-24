@@ -6,8 +6,8 @@ Chart.register(ChartDataLabels);
 interface TableParticipant {
   name: string;
   role: string;
-  presencesFinal: number;
-  faultsFinal: number;
+  presences: number;
+  faults: number;
 }
 
 interface AtualizarTabelaParams {
@@ -33,12 +33,12 @@ export function atualizarTabela({
   participantes.forEach((participant) => {
     const row = tabela.insertRow();
     const porcentagemPresenca =
-      ((participant.presencesFinal / 9) * 100).toFixed(0) + "%";
+      ((participant.presences / 9) * 100).toFixed(0) + "%";
 
     row.insertCell(0).textContent = participant.name;
     row.insertCell(1).textContent = participant.role;
-    row.insertCell(2).textContent = String(participant.presencesFinal);
-    row.insertCell(3).textContent = String(participant.faultsFinal);
+    row.insertCell(2).textContent = String(participant.presences);
+    row.insertCell(3).textContent = String(participant.faults);
     row.insertCell(4).textContent = porcentagemPresenca;
   });
 }
