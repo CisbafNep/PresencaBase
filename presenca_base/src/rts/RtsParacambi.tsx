@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom"; // Hook para pegar os parâm
 import { atualizarTabela, gerarGrafico } from "./RtsService";
 import "../styles/rts.css";
 import { RtSHeader } from "./RTSHeader.tsx";
-import { useGetAllUsers } from "../hooks/getAllUsers";
+import { useGetAllUsers } from "../hooks/getAllBaseUsers.ts";
 
 const RTsParacambi = () => {
   const idTabela = "tabela-presenca-paracambirt";

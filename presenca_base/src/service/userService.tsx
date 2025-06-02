@@ -4,7 +4,7 @@ import { useGetUser } from "../hooks/getUsers";
 import { usePutUser } from "../hooks/putUsers";
 import { Button, Input, CircularProgress, Box } from "@mui/material";
 import { useGetUserLive } from "../hooks/getUsersLive";
-import { useGetAllUsers } from "../hooks/getAllUsers";
+import { useGetAllUsers } from "../hooks/getAllBaseUsers.ts";
 import { ChartComponent } from "./ChartComponent";
 import { ParticipantsTable } from "./ParticipantsTable";
 import { exportParticipantsToXLS } from "./exportUtils";

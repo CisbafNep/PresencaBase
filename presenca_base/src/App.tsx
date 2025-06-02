@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Layout } from "./components/Layout.tsx";
 import QRCodeGenerator from "./gerador_QRCode/QRCodeGenerator.tsx";
 import LeitorQRCode from "./leitor_qrcode/LeitorQRCode.tsx";
+import {PeopleManagement} from "./contents/PeopleManagement.tsx";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -54,6 +55,7 @@ function App() {
         <Route path="/RtsParacambi" element={<RTsParacambi />} />
         <Route path="/RtsQueimados" element={<RtsQueimados />} />
         <Route path="/gerador_QRCode" element={<QRCodeGenerator />} />
+        <Route path="/gestao_presenca" element={<PeopleManagement />} />
         <Route path="/leitor" element={<LeitorQRCode />} />
       </Routes>
 

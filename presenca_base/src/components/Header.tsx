@@ -37,6 +37,9 @@ export function Header({ toggleSidebar, isSidebarOpen }: HeaderProps) {
       <button style={{ background: "none", border: "none" }}>
         <a href="/queimados">QUEIMADOS</a>
       </button>
+        <button style={{ background: "none", border: "none" }}>
+            <a href="/gestao_presenca">GERENCIAMENTO</a>
+        </button>
     </header>
   );
 }
